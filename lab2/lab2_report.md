@@ -43,7 +43,7 @@ flask-docker-app/
 
 ### 3.2. Создание аккаунта и репозитория на Docker Hub
 
-Создан (или использован существующий) аккаунт на [hub.docker.com](https://hub.docker.com/).
+Создан аккаунт на [hub.docker.com](https://hub.docker.com/).
 
 В личном кабинете создан новый публичный репозиторий для образа — **my-flask-app**.
 
@@ -64,7 +64,6 @@ flask-docker-app/
 
 В корне репозитория создана папка `.github/workflows/`, а внутри — файл `docker-build.yml` со следующим содержимым:
 
-![Содержимое workflow-файла](https://images/laba2_2.png)
 
 ```yaml
 name: Docker Build and Push
@@ -106,6 +105,9 @@ jobs:
       - name: Deploy
         run: echo "Deploying ${{ secrets.DOCKER_USERNAME }}/my-flask-app:latest to production..."
 ```
+
+![Проверка логов](images/laba2_4.png)
+
 ## 3.5. Описание пайплайна
 
 | Шаг | Экшен | Назначение |
@@ -132,19 +134,18 @@ git push origin main
 
 Пайплайн запустился автоматически. Во вкладке **Actions** репозитория отображается запуск workflow **Docker Build and Push**.
 
-![Автоматический запуск пайплайна](https://images/laba2_3.png)
 
 ### 3. Проверка логов шагов
 
 Проверены логи каждого шага — все завершились успешно. В логе шага **Log in to Docker Hub** отображается сообщение **Login Succeeded**, в логе **Build and push Docker image** — информация о сборке и публикации слоёв образа.
 
-![Проверка логов](https://images/laba2_4.png)
+![Сводка сборки](images/laba2_5.png)
 
 ### 4. Сводка сборки
 
 По завершении сборки сформирована сводка **Docker Build summary** с информацией о кэше и длительности сборки.
 
-![Сводка сборки](https://images/laba2_5.png)
+![Предупреждение о Node.js 20](images/laba2_6.png)
 
 ### 5. Предупреждение о Node.js 20
 
@@ -155,35 +156,17 @@ Warning: Node.js 20 is deprecated. The following actions target Node.js 20 but a
 being forced to run on Node.js 24: actions/checkout@v4, docker/build-push-action@v6,
 docker/login-action@v3, docker/setup-buildx-action@v3.
 ```
+![Запуск контейнера](images/laba2_9.png)
 
-![Предупреждение о Node.js 20](https://images/laba2_6.png)
-
-Это **предупреждение, а не ошибка**. Оно означает, что GitHub постепенно переводит раннеры на Node.js 24, а используемые экшены пока заявлены как поддерживающие Node.js 20. Пайплайн при этом завершился успешно (зелёная галочка). В будущем потребуется обновить версии экшенов (`@v5`, `@v4` и т.д.), когда их авторы выпустят релизы под Node.js 24.
+Это **предупреждение, а не ошибка**. Оно означает, что GitHub постепенно переводит раннеры на Node.js 24, а используемые экшены пока заявлены как поддерживающие Node.js 20. Пайплайн при этом завершился успешно. 
 
 ### 6. Проверка результата на Docker Hub
 
 Результат проверен на Docker Hub: в репозитории **my-flask-app** появился тег **latest** со свежей датой сборки.
 
-![Результат на Docker Hub](https://images/laba2_7.png)
+![Сборка образа локально](images/laba2_8.png)
 
-### 7. Локальная проверка образа
 
-Дополнительно образ проверен локально:
-
-```bash
-docker pull ВАШ_ЛОГИН/my-flask-app:latest
-docker run -d -p 5000:5000 --name test ВАШ_ЛОГИН/my-flask-app:latest
-```
-
-Сборка образа локально:
-
-![Сборка образа локально](https://images/laba2_8.png)
-
-Запуск контейнера в фоновом режиме:
-
-![Запуск контейнера](https://images/laba2_9.png)
-
-При открытии в браузере адреса [http://localhost:5000](http://localhost:5000/) отображается строка **Hello from Docker!** — образ работает корректно.
 
 ## 4. Итоговая структура проекта
 
@@ -197,17 +180,8 @@ flask-docker-app/
 └── Dockerfile                    ← инструкция сборки образа
 ```
 
-## 5. Возможные проблемы и их решения
 
-| Проблема | Причина | Решение |
-|----------|---------|---------|
-| `denied: requested access to the resource is denied` | Отсутствует репозиторий `my-flask-app` на Docker Hub | Создать репозиторий в личном кабинете Docker Hub |
-| `unauthorized: incorrect username or password` | Неверный логин или истёк токен | Проверить секреты; при необходимости сгенерировать новый токен |
-| `Dockerfile not found` | Файл отсутствует в корне репозитория | Переместить `Dockerfile` в корень проекта |
-| Workflow не запускается | Файл лежит не в `.github/workflows/` или пуш был не в `main` | Проверить путь и ветку |
-| Warning про Node.js 20 | Устаревание среды выполнения в сторонних экшенах | Игнорировать; обновить версии экшенов после выхода новых релизов |
-
-## 6. Выводы
+## 5. Выводы
 
 В ходе лабораторной работы был настроен полноценный CI/CD-пайплайн с использованием GitHub Actions. Пайплайн автоматически:
 
