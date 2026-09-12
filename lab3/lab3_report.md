@@ -36,7 +36,7 @@ cd prometheus
 notepad prometheus.yml
 ```
 
-*(см. скриншот 25)*
+![](images/laba3_1.png)
 
 В файл записано:
 
@@ -64,7 +64,7 @@ docker run -d --name node-exporter --restart=unless-stopped -p 9100:9100 -v "/pr
 
 Образ `prom/node-exporter:latest` был автоматически скачан, контейнер получил ID `54844f33b09a`.
 
-*(см. скриншот 24)*
+![](images/laba3_2.png)
 
 **Проверка работы:** выполнена команда `curl http://localhost:9100/metrics`. PowerShell запросил подтверждение безопасности (`Invoke-WebRequest` — риск выполнения сценария), после ответа `y` получен ответ:
 
@@ -76,7 +76,7 @@ RawContentLength : 130541
 
 В теле ответа — метрики `go_gc_duration_seconds`, `go_goroutines` и другие.
 
-*(см. скриншот 23)*
+![](images/laba3_3.png)
 
 ### 3.3. Запуск Prometheus
 
@@ -87,7 +87,8 @@ docker volume create prometheus-data
 docker network create monitoring
 ```
 
-*(см. скриншоты 21, 22)*
+![](images/laba3_4.png)
+![](images/laba3_5.png)
 
 Запущен контейнер Prometheus из корневой папки проекта — на уровень выше `prometheus/` — с монтированием конфигурации и тома данных:
 
@@ -97,11 +98,11 @@ docker run -d --name prometheus --network monitoring --restart=unless-stopped -p
 
 Образ скачан, контейнер получил ID `52f350ebbdb3`.
 
-*(см. скриншот 20)*
+![](images/laba3_6.png)
 
 **Проверка:** открыт [http://localhost:9090](http://localhost:9090) — веб-интерфейс Prometheus доступен, вкладка **Query** пока пустая («No data queried yet»).
 
-*(см. скриншот 19)*
+![](images/laba3_7.png)
 
 **Проверка таргетов:** открыт [http://localhost:9090/targets](http://localhost:9090/targets) — оба таргета в статусе **UP**:
 
@@ -110,7 +111,7 @@ docker run -d --name prometheus --network monitoring --restart=unless-stopped -p
 | `node-exporter` | `http://node-exporter:9100/metrics` | 13.485s ago | **UP** |
 | `prometheus` | `http://localhost:9090/metrics` | 3.118s ago | **UP** |
 
-*(см. скриншот 11)*
+![](images/laba3_15.png)
 
 ### 3.4. Диагностика сети и подключение Node Exporter
 
@@ -132,7 +133,7 @@ docker network inspect monitoring --format '{{range .Containers}}{{.Name}} {{end
 # → prometheus node-exporter grafana
 ```
 
-*(см. скриншот 10)*
+![](images/laba3_16.png)
 
 **Контейнеры после исправления:**
 
@@ -143,7 +144,6 @@ CONTAINER ID   IMAGE                STATUS         PORTS                    NAME
 54844f33b09a   prom/node-exporter   Up 17 minutes  0.0.0.0:9100->9100/tcp   node-exporter
 ```
 
-*(см. скриншот 13)*
 
 ### 3.5. Запуск Grafana
 
@@ -155,13 +155,14 @@ docker volume create grafana-data
 docker run -d --name grafana --network monitoring --restart=unless-stopped -p 3000:3000 -v grafana-data:/var/lib/grafana -e "GF_SECURITY_ADMIN_PASSWORD=admin" grafana/grafana
 ```
 
-Образ `grafana/grafana:latest` скачан, контейнер получил ID `5ed8968b2af1`.
+Образ `grafana/grafana:latest` скачан
 
-*(см. скриншоты 17, 18)*
+![](images/laba3_8.png)
+![](images/laba3_9.png)
 
 **Проверка:** открыт [http://localhost:3000](http://localhost:3000) — отображается страница приветствия **Welcome to Grafana** с формой входа.
 
-*(см. скриншот 16)*
+![](images/laba3_10.png)
 
 ### 3.6. Настройка источника данных в Grafana
 
@@ -170,7 +171,7 @@ docker run -d --name grafana --network monitoring --restart=unless-stopped -p 30
 3. В поле **Connection URL** указан адрес `http://prometheus:9090` — имя сервиса в сети `monitoring`, а не `localhost`.
 4. Нажата кнопка **Save & test** — получено сообщение **Data source is working**.
 
-*(см. скриншот 15)*
+![](images/laba3_11.png)
 
 ### 3.7. Создание дашбордов
 
@@ -196,7 +197,7 @@ docker run -d --name grafana --network monitoring --restart=unless-stopped -p 30
 
 **Проверка:** при отсутствии нагрузки график плоский, значение `Last *: 0.682%`.
 
-*(см. скриншот 5)*
+![](images/laba3_21.png)
 
 #### Панель 2. Memory Usage (%)
 
@@ -217,7 +218,7 @@ docker run -d --name grafana --network monitoring --restart=unless-stopped -p 30
 
 **Проверка:** график показывает стабильное значение около 18% — график слегка растёт в диапазоне 17–19%.
 
-*(см. скриншоты 1, 2, 8)*
+![](images/laba3_25.png)
 
 #### Панель 3. Disk Free (bytes)
 
@@ -237,11 +238,7 @@ node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs"}
 
 **Проверка:** на диаграмме видно распределение свободного места по точкам монтирования: `/mnt/docker-desktop-disk`, `/run/desktop/mnt/host/c`, `/var/lib`, `/mnt/host/c`, `/parent-distro/mnt/host/c` и другим.
 
-*(см. скриншоты 6, 9)*
-
-**Промежуточная панель с сырой метрикой `node_cpu_seconds_total`** использовалась для проверки источника данных и парсинга меток (`cpu`, `mode`). В легенде отображаются все комбинации `cpu="0..N"` и `mode="idle|user|system|iowait|..."`.
-
-*(см. скриншоты 12, 14)*
+![](images/laba3_20.png)
 
 Дашборд сохранён через кнопку **Save → Dashboard saved**.
 
@@ -260,14 +257,12 @@ stress: info: [1] dispatching hogs: 4 cpu, 0 io, 0 vm, 0 hdd
 stress: info: [1] successful run completed in 60s
 ```
 
-*(см. скриншот 3)*
+![](images/laba3_22.png)
 
 **Результат на графике CPU Usage:** при включённом автообновлении каждые 5 секунд на панели **CPU Usage (%)** виден рост с 5% до 15% в течение минуты:
 
 - `Last *: 15.1%`, `Max: 15.1%` — в момент нагрузки;
 - после завершения — возврат примерно к 0.7%.
-
-*(см. скриншот 4)*
 
 Это подтверждает, что цепочка **Node Exporter → Prometheus → Grafana** работает корректно и реагирует на изменение состояния системы.
 
@@ -290,18 +285,6 @@ stress: info: [1] successful run completed in 60s
 
 ---
 
-## 5. Возможные проблемы и решения
-
-| Проблема | Причина | Решение |
-|----------|---------|---------|
-| `node-exporter` DOWN в Prometheus | Контейнер не в сети `monitoring` | `docker network connect monitoring node-exporter` + `docker restart prometheus` |
-| Grafana «No data» | Неверный Data Source URL | Использовать `http://prometheus:9090`, не `localhost` |
-| Плоский график CPU | Нагрузка на хост не видна в WSL2 | Запустить нагрузку внутри Docker (`jess/stress`) |
-| Образ `progrium/stress` не запускается | Устаревший формат манифеста Schema 1 | Использовать `jess/stress` |
-| Порт занят | Другой сервис на 9090/3000/9100 | Сменить проброс: `-p 9091:9090` |
-
----
-
 ## 6. Выводы
 
 В ходе лабораторной работы была развёрнута полноценная система мониторинга:
@@ -311,51 +294,3 @@ stress: info: [1] successful run completed in 60s
 3. **Grafana** подключена к Prometheus через общую docker-сеть, что позволяет использовать DNS-имя сервиса вместо IP-адреса.
 4. Построен дашборд с панелями: **CPU Usage (%)**, **Memory Usage (%)**, **Disk Free (bytes)** — круговая диаграмма.
 5. Проверена работоспособность системы под нагрузкой: при запуске `jess/stress --cpu 4` на графике CPU наблюдался рост с 5% до 15%.
-
-**Полученные навыки:**
-
-- работа с конфигурацией Prometheus (`prometheus.yml`);
-- запуск и связка контейнеров через пользовательские сети Docker;
-- использование PromQL для построения запросов;
-- создание панелей и дашбордов в Grafana;
-- диагностика и решение проблем со связностью контейнеров.
-
-**Цель работы достигнута полностью.**
-
----
-
-## Приложение. Список скриншотов
-
-| № | Что показано |
-|---|--------------|
-| 1 | Grafana: панель Memory Usage (%) — стабильное значение около 18% |
-| 2 | Grafana: Memory Usage (%) — крупный план графика |
-| 3 | PowerShell: запуск `jess/stress --cpu 4 --timeout 60s`, успешное завершение |
-| 4 | Grafana: CPU Usage (%) — рост графика с 5% до 15% под нагрузкой (Refresh 5s) |
-| 5 | Grafana: CPU Usage (%) — плоский график в покое (`Last *: 0.682%`) |
-| 6 | Grafana: Disk Free (bytes) — круговая диаграмма распределения места |
-| 7 | Grafana: CPU Usage (%) — плоский график (`Last *: 0.758%`) |
-| 8 | Grafana: Memory Usage (%) — плоский график около 18% |
-| 9 | Grafana: редактор панели Disk Free (bytes) — запрос PromQL и настройки |
-| 10 | PowerShell: `docker ps`, проверка сети monitoring, подключение node-exporter |
-| 11 | Prometheus: страница `/targets` — оба таргета UP |
-| 12 | Grafana: редактор панели с метрикой `node_cpu_seconds_total` |
-| 13 | PowerShell: `docker ps` — все три контейнера мониторинга запущены |
-| 14 | Grafana: пустой дашборд с запросом `node_cpu_seconds_total` |
-| 15 | Grafana: настройка Data Source Prometheus (`http://prometheus:9090`) |
-| 16 | Grafana: страница входа Welcome to Grafana |
-| 17 | PowerShell: запуск контейнера Grafana (pull образа и старт) |
-| 18 | PowerShell: `docker volume create grafana-data` |
-| 19 | Prometheus: пустая вкладка Query («No data queried yet») |
-| 20 | PowerShell: запуск контейнера Prometheus с `${PWD}/prometheus` |
-| 21 | PowerShell: `docker network create monitoring` |
-| 22 | PowerShell: `docker volume create prometheus-data` |
-| 23 | PowerShell: `curl http://localhost:9100/metrics` — вывод метрик |
-| 24 | PowerShell: запуск контейнера Node Exporter |
-| 25 | PowerShell: переход в папку prometheus и открытие prometheus.yml |
-
----
-
-**Дата сдачи:** __________  
-**Подпись студента:** __________  
-**Подпись преподавателя:** __________
