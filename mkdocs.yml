@@ -1,0 +1,52 @@
+site_name: PetFeed Home Lite
+site_description: Умная IoT-кормушка для домашних животных
+site_author: Новиков Алексей
+site_url: https://uralnaveki.github.io/devops-lab-novikov/ # Замените на будущий URL проекта
+
+theme:
+  name: material
+  custom_dir: overrides
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+  palette:
+    # Светлая тема
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Переключить на темную тему
+    # Темная тема
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Переключить на светлую тему
+  # Закомментировали, так как этих файлов нет
+  # logo: images/logo.png 
+  # favicon: images/favicon.png
+
+nav:
+  - Главная: index.md
+  - Концепция: concept.md
+  - Технологии: tech.md
+  - Экономика: economics.md
+  - Контакты: contacts.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - tables
+  - attr_list
+  - md_in_html
+extra_css:
+  - assets/stylesheets/hero.css

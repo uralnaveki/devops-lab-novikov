@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block tabs %}
+  {{ super() }}
+  <style>
+    /* Скрываем весь стандартный контент и боковые панели */
+    .md-content { display: none !important; }
+    .md-sidebar { display: none !important; }
+    .md-main__inner { margin: 0 !important; max-width: none !important; }
+    .md-grid { max-width: none !important; }
+    .md-main { flex-grow: 1; }
+    .md-header { position: initial; }
+  </style>
+
+  <div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>PetFeed Home Lite</h1>
+      <p>Умная IoT-кормушка для регулярного и дозированного кормления кошек и небольших собак.</p>
+      <div class="hero-buttons">
+        <a href="concept/" class="md-button md-button--primary">Узнать больше</a>
+        <a href="tech/" class="md-button">Технологии</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}{% endblock %}
