@@ -5,6 +5,7 @@ site_url: https://uralnaveki.github.io/devops-lab-novikov/ # Замените н
 
 theme:
   name: material
+  language: ru
   custom_dir: overrides
   features:
     - navigation.tabs
