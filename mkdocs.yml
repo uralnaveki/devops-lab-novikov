@@ -51,3 +51,5 @@ markdown_extensions:
   - md_in_html
 extra_css:
   - assets/stylesheets/hero.css
+  - pymdownx.tabbed:
+      alternate_style: true
