@@ -2,4 +2,6 @@
 Лабы ИКТ ИТМО
 Контакты: Tg @Guitarboy003, uralnaveki@gmail.com 
 План изучения DevOps:
-установить докер и сделать все лабы 
+установить докер и сделать все лабы
+
+Сайт: https://uralnaveki.github.io/devops-lab-novikov/
